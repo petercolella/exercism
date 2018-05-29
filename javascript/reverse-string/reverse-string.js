@@ -1,18 +1,12 @@
-// var reverseString = function (input) {
-    
-//     this.string = input
-// };
+function reverseString(str) {
 
-// reverseString.prototype.
-reverseString = function (str) {
-
-    // let str = this.string;
-    let newStr = [];
+    let newStr = '';
 
     for (i = str.length - 1; i >= 0; i--) {
-        newStr.push(str.charAt(i));
+        newStr += str[i];
     }
-    return newStr.join('');
+
+    return newStr;
 };
 
 module.exports = reverseString;
