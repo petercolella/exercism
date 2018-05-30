@@ -1,25 +1,20 @@
-var DnaTranscriber = function (input) {
-    
-    // this.dna = input;
-}
+var DnaTranscriber = function (input) {}
 
 DnaTranscriber.prototype.toRna = function (dna) {
 
-    // var strand = this.dna;
-    let rna = '';
+    const replaceChars = {
+        'G' : 'C',
+        'C' : 'G',
+        'T' : 'A',
+        'A' : 'U'
+    };
+    
+    const rna = dna
+        .replace(/G|C|T|A/g, function(match) {
+            return replaceChars[match];
+        });
 
-    for (i = 0; i <= dna.length; i++) {
-        if (dna[i] === 'G') {
-            rna.replace(i, 'C');
-        } else if (dna[i] === 'C') {
-            rna.replace(i, 'G');
-        } else if (dna[i] === 'T') {
-            rna.replace(i, 'A');
-        } else if (dna[i] === 'A') {
-            rna.replace(i, 'U');
-        }
-    }
-    return dna, rna;
+    return rna;
 }
 
 module.exports = DnaTranscriber;
