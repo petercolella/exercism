@@ -17,7 +17,7 @@ describe('Random key cipher', function () {
     expect(cipher.key).toMatch(/^[a-z]+$/);
   });
 
-  xit('has a key that is at least 100 characters long', function () {
+  it('has a key that is at least 100 characters long', function () {
     expect(cipher.key.length).toBeGreaterThanOrEqual(100);
   });
 
