@@ -1,16 +1,26 @@
-function Cipher(key) {
-    if (key.length < 100) {
+const Cipher = function() {}
+
+Cipher.prototype.encode = function(userKey) {
+    let key;
+
+    function randomKey() {
+        let result;
         const keyLength = 100;
         const charSet = "abcdefghijklmnopqrstuvwxyz";
-        let newKey = '';
-        for( var i = 0; i < keyLength; i++ )
-            newKey += charSet[Math.floor(Math.random() * charSet.length)];
+        for( var i = 0; i < keyLength; i++ ) {
+            result += charSet[Math.floor(Math.random() * charSet.length)];
         }
-    key = newKey;
-}
-
-Cipher.prototype.encode = function() {
-        // key = 'aaaa';
+        return result;
+    }
+    
+    
+    if (userKey === 'null') {
+        userKey = randomKey();
+    } else if (!userKey.match(/^[a-z]+$/)) {
+        throw new Error('Bad key');
+    }
+    this.key = userKey;
+    key = this.key;
 }
 
 module.exports = Cipher;
