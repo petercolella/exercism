@@ -1,7 +1,7 @@
 var Cipher = require('./simple-cipher');
 
 describe('Random key generation', function () {
-  xit('generates keys at random', function () {
+  it('generates keys at random', function () {
     // Strictly speaking, this is difficult to test with 100% certainty.
     // But, if you have a generator that generates 100-character-long
     // strings of lowercase letters at random, the odds of two consecutively
