@@ -45,4 +45,28 @@ Cipher.prototype.encode = function(plainText) {
     return encodedText;
 }
 
+Cipher.prototype.decode = function(cipherText) {
+  
+    const keyIndexesInCharSet = [];
+    for (var i = 0; i < cipherText.length; i++) {
+        keyIndexesInCharSet.push(charSet.indexOf(this.key[i % this.key.length]));
+    }
+
+    const cipherTextIndexesInCharSet = [];
+    for (var i = 0; i < cipherText.length; i++) {
+        cipherTextIndexesInCharSet.push(charSet.indexOf(cipherText[i]));
+    }
+
+    let decodedText = '';
+    for (var i = 0; i < cipherText.length; i++) {
+        if (cipherTextIndexesInCharSet[i] - keyIndexesInCharSet[i] < 0) {
+            decodedText += charSet[cipherTextIndexesInCharSet[i] - keyIndexesInCharSet[i] + max];
+        } else {
+            decodedText += charSet[cipherTextIndexesInCharSet[i] - keyIndexesInCharSet[i]];
+        }
+    }
+
+    return decodedText;
+}
+
 module.exports = Cipher;
