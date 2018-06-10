@@ -2,6 +2,14 @@ const keyLength = 100;
 const charSet = "abcdefghijklmnopqrstuvwxyz";
 const max = charSet.length;
 
+textIndexArray = function(text) {
+    let result = [];
+    for (var i = 0; i < text.length; i++) {
+        result.push(charSet.indexOf(text[i]));
+    }
+    return result;
+}
+
 const Cipher = function(userKey) {
 
     function randomKey() {
@@ -11,62 +19,48 @@ const Cipher = function(userKey) {
         }
         return result;
     }
-        
+    
     if (userKey === undefined) {
         userKey = randomKey();
     } else if (!userKey.match(/^[a-z]+$/)) {
         throw new Error('Bad key');
     }
-
+    
+    this.keyIndexArray = function(text) {
+        let result = [];
+        for (var i = 0; i < text.length; i++) {
+            result.push(charSet.indexOf(userKey[i % userKey.length]));
+        }
+        return result;
+    }
+    
     this.key = userKey;
 }
 
-Cipher.prototype.encode = function(plainText) {
-  
-    const keyIndexesInCharSet = [];
-    for (var i = 0; i < plainText.length; i++) {
-        keyIndexesInCharSet.push(charSet.indexOf(this.key[i % this.key.length]));
-    }
+Cipher.prototype = {
+    encode: function(plainText) {
+        const keyIndexes = this.keyIndexArray(plainText);
+        const textIndexes = textIndexArray(plainText);
+        let encodedText = '';
 
-    const plainTextIndexesInCharSet = [];
-    for (var i = 0; i < plainText.length; i++) {
-        plainTextIndexesInCharSet.push(charSet.indexOf(plainText[i]));
-    }
-
-    let encodedText = '';
-    for (var i = 0; i < plainText.length; i++) {
-        if (keyIndexesInCharSet[i] + plainTextIndexesInCharSet[i] >= max) {
-            encodedText += charSet[keyIndexesInCharSet[i] + plainTextIndexesInCharSet[i] - max];
-        } else {
-            encodedText += charSet[keyIndexesInCharSet[i] + plainTextIndexesInCharSet[i]];
+        for (var i = 0; i < plainText.length; i++) {
+            indexSum = keyIndexes[i] + textIndexes[i];
+            encodedText += indexSum >= max ? charSet[indexSum - max] : charSet[indexSum];
         }
-    }
+        return encodedText;
+    },
 
-    return encodedText;
-}
+    decode: function(cipherText) {
+        const keyIndexes = this.keyIndexArray(cipherText);
+        const textIndexes = textIndexArray(cipherText);
+        let decodedText = '';
 
-Cipher.prototype.decode = function(cipherText) {
-  
-    const keyIndexesInCharSet = [];
-    for (var i = 0; i < cipherText.length; i++) {
-        keyIndexesInCharSet.push(charSet.indexOf(this.key[i % this.key.length]));
-    }
-
-    const cipherTextIndexesInCharSet = [];
-    for (var i = 0; i < cipherText.length; i++) {
-        cipherTextIndexesInCharSet.push(charSet.indexOf(cipherText[i]));
-    }
-
-    let decodedText = '';
-    for (var i = 0; i < cipherText.length; i++) {
-        if (cipherTextIndexesInCharSet[i] - keyIndexesInCharSet[i] < 0) {
-            decodedText += charSet[cipherTextIndexesInCharSet[i] - keyIndexesInCharSet[i] + max];
-        } else {
-            decodedText += charSet[cipherTextIndexesInCharSet[i] - keyIndexesInCharSet[i]];
+        for (var i = 0; i < cipherText.length; i++) {
+            indexDiff = textIndexes[i] - keyIndexes[i];
+            decodedText += indexDiff < 0 ? charSet[indexDiff + max] : charSet[indexDiff];
         }
+        return decodedText;
     }
-
-    return decodedText;
 }
 
 module.exports = Cipher;
