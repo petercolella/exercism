@@ -5,13 +5,10 @@
 //
 
 export const hey = message => {
-  //
-  // YOUR CODE GOES HERE
-  //
   if (
     !/[a-z]/.test(message) &&
     /[A-Z]/.test(message) &&
-    message.charAt(message.length - 1) === '?'
+    message.charAt(message.trim().length - 1) === '?'
   ) {
     return "Calm down, I know what I'm doing!";
   } else if (!/[a-z]/.test(message) && /[A-Z]/.test(message)) {
