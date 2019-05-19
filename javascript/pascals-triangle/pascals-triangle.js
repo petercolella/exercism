@@ -10,7 +10,13 @@ export class Triangle {
       let currentRow = [];
       if (previousRow) {
         for (let j = 0; j < i; j++) {
-          currentRow.push(previousRow[j - 1] || 0 + previousRow[j] || 0);
+          currentRow.push((previousRow[j - 1] || 0) + (previousRow[j] || 0));
+          console.log(
+            `i: ${i} j: ${j} previousRow: ${previousRow} previousRow[j - 1]: ${
+              previousRow[j - 1]
+            } previousRow[j]: ${previousRow[j]}`
+          );
+          console.log(`i: ${i} j: ${j} currentRow: ${currentRow}`);
         }
       } else {
         currentRow.push(i);
