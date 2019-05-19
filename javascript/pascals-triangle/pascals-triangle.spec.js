@@ -13,7 +13,7 @@ describe('Triangle', () => {
     expect(new Triangle(3).rows).toEqual([[1], [1, 1], [1, 2, 1]]);
   });
 
-  xtest('last row', () => {
+  test('last row', () => {
     expect(new Triangle(4).lastRow).toEqual([1, 3, 3, 1]);
   });
 

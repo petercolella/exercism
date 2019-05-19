@@ -1,6 +1,7 @@
 export class Triangle {
   constructor(n) {
     this.rows = this.populateRows(n);
+    this.lastRow = this.rows[n - 1];
   }
 
   populateRows(n) {
