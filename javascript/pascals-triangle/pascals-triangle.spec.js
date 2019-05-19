@@ -1,6 +1,10 @@
 import { Triangle } from './pascals-triangle';
 
 describe('Triangle', () => {
+  test('with zero rows', () => {
+    expect(new Triangle(0).rows).toEqual([]);
+  });
+
   test('with one row', () => {
     expect(new Triangle(1).rows).toEqual([[1]]);
   });
