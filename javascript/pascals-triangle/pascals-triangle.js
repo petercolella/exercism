@@ -1,6 +1,10 @@
 export class Triangle {
   constructor(n) {
-    this.n = n;
-    this.rows = [[1]];
+    this.rows = this.populateRows(n);
+  }
+
+  populateRows(n) {
+    let rows = [[1]];
+    return rows;
   }
 }
