@@ -1,4 +1,4 @@
-export class Triangle {
+module.exports = class Triangle {
   constructor(n) {
     this.rows = this.populateRowsRecursive(n);
     this.lastRow = this.rows[n - 1];
@@ -23,14 +23,19 @@ export class Triangle {
 
   populateRowsRecursive(n, rows) {
     if (!rows) rows = [[1]];
-    if (n <= 1) return n ? rows : rows.slice(0, n);
-
-    let currentRow = [];
-    let previousRow = rows[rows.length - 1];
-    for (let i = 0; i < previousRow.length + 1; i++) {
-      currentRow.push((previousRow[i - 1] || 0) + (previousRow[i] || 0));
+    if (n <= 1) {
+      return rows;
+      //   .slice(0, n);
+    } else {
+      let currentRow = [];
+      let previousRow = rows[rows.length - 1];
+      console.log('n: ', n, 'previousRow: ', previousRow);
+      for (let i = 0; i < previousRow.length + 1; i++) {
+        currentRow.push((previousRow[i - 1] || 0) + (previousRow[i] || 0));
+      }
+      console.log('n: ', n, 'currentRow: ', currentRow);
+      rows.push(currentRow);
+      return this.populateRowsRecursive(n - 1, rows);
     }
-    rows.push(currentRow);
-    return this.populateRowsRecursive(n - 1, rows);
   }
-}
+};
