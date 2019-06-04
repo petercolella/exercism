@@ -23,7 +23,7 @@ export class Triangle {
 
   populateRowsRecursive(n, rows) {
     if (!rows) rows = [[1]];
-    if (n <= 1) return n ? rows : rows.slice(0, n);
+    if (n <= 1) return n ? rows : [];
 
     let currentRow = [];
     let previousRow = rows[rows.length - 1];
