@@ -16,7 +16,8 @@
     "babel-jest": "^24.9.0",
     "eslint": "^5.15.3",
     "eslint-plugin-import": "^2.20.1",
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "minimist": ">=1.2.2"
   },
   "jest": {
     "modulePathIgnorePatterns": [
