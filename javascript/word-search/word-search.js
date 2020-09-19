@@ -25,6 +25,17 @@ class WordSearch {
             end: [rowNum, firstLetterIndex + len]
           };
         }
+        const lastLetterIndex = row.indexOf(word[len - 1]);
+        if (
+          lastLetterIndex !== -1 &&
+          row.substring(lastLetterIndex, lastLetterIndex + len) ===
+            word.split('').reverse().join('')
+        ) {
+          results[word] = {
+            start: [rowNum, lastLetterIndex + len],
+            end: [rowNum, lastLetterIndex + 1]
+          };
+        }
       });
     });
     return results;

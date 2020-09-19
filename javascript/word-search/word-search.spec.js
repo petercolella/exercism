@@ -213,7 +213,7 @@ describe('can find multiple words', () => {
 });
 
 describe('different directions', () => {
-  xtest('should locate a single word written right to left', () => {
+  test('should locate a single word written right to left', () => {
     const grid = ['rixilelhrs'];
     const expectedResults = {
       elixir: {
@@ -225,7 +225,7 @@ describe('different directions', () => {
 
     expect(wordSearch.find(['elixir'])).toEqual(expectedResults);
   });
-  xtest('should locate multiple words written in different horizontal directions', () => {
+  test('should locate multiple words written in different horizontal directions', () => {
     const grid = [
       'jefblpepre',
       'camdcimgtc',
