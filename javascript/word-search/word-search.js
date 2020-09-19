@@ -10,12 +10,12 @@ class WordSearch {
 
   find(words) {
     const results = {};
-    this.grid.forEach((row, i) => {
-      const rowNum = i + 1;
-      words.forEach(word => {
-        results[word] = undefined;
+    words.forEach(word => {
+      results[word] = undefined;
+      const len = word.length;
+      this.grid.forEach((row, i) => {
+        const rowNum = i + 1;
         const firstLetterIndex = row.indexOf(word[0]);
-        const len = word.length;
         if (
           firstLetterIndex !== -1 &&
           row.substring(firstLetterIndex, firstLetterIndex + len) === word
