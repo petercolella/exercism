@@ -11,19 +11,19 @@ class WordSearch {
   find(words) {
     const results = {};
     this.grid.forEach((row, i) => {
-      words.forEach((word, j) => {
+      const rowNum = i + 1;
+      words.forEach(word => {
         results[word] = undefined;
-        for (let k = 0; k < word.length; k++) {
-          const rowIndex = row.indexOf(word[k]);
-          if (rowIndex !== -1) {
-            if (k === 0) {
-              results[word] = { start: [i + 1, rowIndex + 1] };
-            } else if (k === word.length - 1) {
-              results[word].end = [i + 1, rowIndex + 1];
-            }
-          } else {
-            return;
-          }
+        const firstLetterIndex = row.indexOf(word[0]);
+        const len = word.length;
+        if (
+          firstLetterIndex !== -1 &&
+          row.substring(firstLetterIndex, firstLetterIndex + len) === word
+        ) {
+          results[word] = {
+            start: [rowNum, firstLetterIndex + 1],
+            end: [rowNum, firstLetterIndex + len]
+          };
         }
       });
     });

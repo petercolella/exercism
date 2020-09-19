@@ -41,7 +41,7 @@ describe('single line grids', () => {
     expect(wordSearch.find(['clojure'])).toEqual(expectedResults);
   });
 
-  xtest('can locate a different left to right word', () => {
+  test('can locate a different left to right word', () => {
     const grid = ['coffeelplx'];
     const expectedResults = {
       coffee: {
