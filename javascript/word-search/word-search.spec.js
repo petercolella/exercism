@@ -288,7 +288,7 @@ describe('vertical directions', () => {
       expectedResults
     );
   });
-  xtest('should locate words written bottom to top', () => {
+  test('should locate words written bottom to top', () => {
     const grid = [
       'jefblpepre',
       'camdcimgtc',

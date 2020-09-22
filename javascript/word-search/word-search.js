@@ -3,6 +3,10 @@
 // convenience to get you started writing code faster.
 //
 
+const reverseStr = str => {
+  return str.split('').reverse().join('');
+};
+
 const checkHorizontally = (results, word, row, rowNum) => {
   const len = word.length;
   const firstLetterIndex = row.indexOf(word[0]);
@@ -18,8 +22,7 @@ const checkHorizontally = (results, word, row, rowNum) => {
   }
   if (
     lastLetterIndex !== -1 &&
-    row.substring(lastLetterIndex, lastLetterIndex + len) ===
-      word.split('').reverse().join('')
+    row.substring(lastLetterIndex, lastLetterIndex + len) === reverseStr(word)
   ) {
     return (results[word] = {
       start: [rowNum, lastLetterIndex + len],
@@ -59,6 +62,17 @@ class WordSearch {
               return (results[word] = {
                 start: [rowNum, j + 1],
                 end: [i + len, j + 1]
+              });
+            }
+            if (
+              gridLen - i >= len &&
+              row[j] === word[len - 1] &&
+              grid.slice(i, i + len).reduce((str, row) => str + row[j], '') ===
+                reverseStr(word)
+            ) {
+              return (results[word] = {
+                start: [i + len, j + 1],
+                end: [rowNum, j + 1]
               });
             }
           }
