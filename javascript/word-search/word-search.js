@@ -53,6 +53,8 @@ class WordSearch {
           const row = grid[i];
           const rowNum = i + 1;
           for (let j = 0; j < row.length; j++) {
+            const colNum = j + 1;
+            // top to bottom
             if (
               gridLen - i >= len &&
               row[j] === word[0] &&
@@ -60,10 +62,23 @@ class WordSearch {
                 word
             ) {
               return (results[word] = {
-                start: [rowNum, j + 1],
-                end: [i + len, j + 1]
+                start: [rowNum, colNum],
+                end: [i + len, colNum]
               });
             }
+            // bottom to top
+            if (
+              gridLen - i >= len &&
+              row[j] === word[len - 1] &&
+              grid.slice(i, i + len).reduce((str, row) => str + row[j], '') ===
+                reverseStr(word)
+            ) {
+              return (results[word] = {
+                start: [i + len, colNum],
+                end: [rowNum, colNum]
+              });
+            }
+            // top left to bottom right
             if (
               gridLen - i >= len &&
               row[j] === word[0] &&
@@ -72,19 +87,22 @@ class WordSearch {
                 .reduce((str, row, index) => str + row[j + index], '') === word
             ) {
               return (results[word] = {
-                start: [rowNum, j + 1],
+                start: [rowNum, colNum],
                 end: [i + len, j + len]
               });
             }
+            // bottom right to top left
             if (
               gridLen - i >= len &&
               row[j] === word[len - 1] &&
-              grid.slice(i, i + len).reduce((str, row) => str + row[j], '') ===
+              grid
+                .slice(i, i + len)
+                .reduce((str, row, index) => str + row[j + index], '') ===
                 reverseStr(word)
             ) {
               return (results[word] = {
-                start: [i + len, j + 1],
-                end: [rowNum, j + 1]
+                start: [i + len, j + len],
+                end: [rowNum, colNum]
               });
             }
           }

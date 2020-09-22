@@ -366,7 +366,7 @@ describe('vertical directions', () => {
       wordSearch.find(['clojure', 'elixir', 'ecmascript', 'rust', 'java'])
     ).toEqual(expectedResults);
   });
-  xtest('should locate words written bottom right to top left', () => {
+  test('should locate words written bottom right to top left', () => {
     const grid = [
       'jefblpepre',
       'camdcimgtc',
