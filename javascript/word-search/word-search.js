@@ -66,6 +66,18 @@ class WordSearch {
             }
             if (
               gridLen - i >= len &&
+              row[j] === word[0] &&
+              grid
+                .slice(i, i + len)
+                .reduce((str, row, index) => str + row[j + index], '') === word
+            ) {
+              return (results[word] = {
+                start: [rowNum, j + 1],
+                end: [i + len, j + len]
+              });
+            }
+            if (
+              gridLen - i >= len &&
               row[j] === word[len - 1] &&
               grid.slice(i, i + len).reduce((str, row) => str + row[j], '') ===
                 reverseStr(word)
