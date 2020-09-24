@@ -105,6 +105,20 @@ class WordSearch {
                 end: [rowNum, colNum]
               });
             }
+            // bottom left to top right
+            if (
+              gridLen - i >= len &&
+              row[j] === word[len - 1] &&
+              grid
+                .slice(i, i + len)
+                .reduce((str, row, index) => str + row[j - index], '') ===
+                reverseStr(word)
+            ) {
+              return (results[word] = {
+                start: [i + len, colNum - len + 1],
+                end: [rowNum, colNum]
+              });
+            }
           }
         }
       }
