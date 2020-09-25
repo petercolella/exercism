@@ -7,28 +7,117 @@ const reverseStr = str => {
   return str.split('').reverse().join('');
 };
 
-const checkHorizontally = (results, word, row, rowNum) => {
-  const len = word.length;
+const findHorizontally = (results, word, grid, i) => {
+  const wordLen = word.length;
+  const row = grid[i];
+  const rowNum = i + 1;
   const firstLetterIndex = row.indexOf(word[0]);
-  const lastLetterIndex = row.indexOf(word[len - 1]);
   if (
     firstLetterIndex !== -1 &&
-    row.substring(firstLetterIndex, firstLetterIndex + len) === word
+    firstLetterIndex + wordLen <= row.length &&
+    row.substring(firstLetterIndex, firstLetterIndex + wordLen) === word
   ) {
-    return (results[word] = {
+    results[word] = {
       start: [rowNum, firstLetterIndex + 1],
-      end: [rowNum, firstLetterIndex + len]
-    });
+      end: [rowNum, firstLetterIndex + wordLen]
+    };
+    return true;
   }
+  const lastLetterIndex = row.indexOf(word[wordLen - 1]);
   if (
     lastLetterIndex !== -1 &&
-    row.substring(lastLetterIndex, lastLetterIndex + len) === reverseStr(word)
+    lastLetterIndex + wordLen <= row.length &&
+    row.substring(lastLetterIndex, lastLetterIndex + wordLen) ===
+      reverseStr(word)
   ) {
-    return (results[word] = {
-      start: [rowNum, lastLetterIndex + len],
+    results[word] = {
+      start: [rowNum, lastLetterIndex + wordLen],
       end: [rowNum, lastLetterIndex + 1]
-    });
+    };
+    return true;
   }
+  return false;
+};
+
+const findTopToBottom = (results, word, grid, i, row, j) => {
+  const wordLen = word.length;
+  const slicedGrid = grid.slice(i, i + wordLen);
+  const rowNum = i + 1;
+  const colNum = j + 1;
+  const start = [rowNum, colNum];
+  // top to bottom
+  if (slicedGrid.reduce((str, row) => str + row[j], '') === word) {
+    results[word] = {
+      start,
+      end: [i + wordLen, colNum]
+    };
+    return true;
+  }
+  // top left to bottom right
+  if (
+    j + wordLen <= row.length &&
+    slicedGrid.reduce((str, row, index) => str + row[j + index], '') === word
+  ) {
+    results[word] = {
+      start,
+      end: [i + wordLen, j + wordLen]
+    };
+    return true;
+  }
+  // top right to bottom left
+  if (
+    colNum - wordLen >= 0 &&
+    slicedGrid.reduce((str, row, index) => str + row[j - index], '') === word
+  ) {
+    results[word] = {
+      start,
+      end: [i + wordLen, colNum - wordLen + 1]
+    };
+    return true;
+  }
+  return false;
+};
+
+const findBottomToTop = (results, word, grid, i, row, j) => {
+  const wordLen = word.length;
+  const slicedGrid = grid.slice(i, i + wordLen);
+  const rowNum = i + 1;
+  const colNum = j + 1;
+  const end = [rowNum, colNum];
+  const reversedWord = reverseStr(word);
+  // bottom to top
+  if (slicedGrid.reduce((str, row) => str + row[j], '') === reversedWord) {
+    results[word] = {
+      start: [i + wordLen, colNum],
+      end
+    };
+    return true;
+  }
+  // bottom right to top left
+  if (
+    j + wordLen <= row.length &&
+    slicedGrid.reduce((str, row, index) => str + row[j + index], '') ===
+      reversedWord
+  ) {
+    results[word] = {
+      start: [i + wordLen, j + wordLen],
+      end
+    };
+    return true;
+  }
+  // bottom left to top right
+  if (
+    colNum - wordLen >= 0 &&
+    slicedGrid.reduce((str, row, index) => str + row[j - index], '') ===
+      reversedWord
+  ) {
+    results[word] = {
+      start: [i + wordLen, colNum - wordLen + 1],
+      end
+    };
+    return true;
+  }
+  return false;
 };
 
 class WordSearch {
@@ -42,95 +131,17 @@ class WordSearch {
     const gridLen = grid.length;
     words.forEach(word => {
       results[word] = undefined;
-      const len = word.length;
+      const wordLen = word.length;
       for (let i = 0; i < gridLen; i++) {
-        const row = grid[i];
-        const rowNum = i + 1;
-        checkHorizontally(results, word, row, rowNum);
-      }
-      if (!results[word]) {
-        for (let i = 0; i < gridLen; i++) {
+        if (findHorizontally(results, word, grid, i)) return;
+        if (gridLen - i >= wordLen) {
           const row = grid[i];
-          const rowNum = i + 1;
           for (let j = 0; j < row.length; j++) {
-            const colNum = j + 1;
-            // top to bottom
-            if (
-              gridLen - i >= len &&
-              row[j] === word[0] &&
-              grid.slice(i, i + len).reduce((str, row) => str + row[j], '') ===
-                word
-            ) {
-              return (results[word] = {
-                start: [rowNum, colNum],
-                end: [i + len, colNum]
-              });
+            if (row[j] === word[0]) {
+              if (findTopToBottom(results, word, grid, i, row, j)) return;
             }
-            // bottom to top
-            if (
-              gridLen - i >= len &&
-              row[j] === word[len - 1] &&
-              grid.slice(i, i + len).reduce((str, row) => str + row[j], '') ===
-                reverseStr(word)
-            ) {
-              return (results[word] = {
-                start: [i + len, colNum],
-                end: [rowNum, colNum]
-              });
-            }
-            // top left to bottom right
-            if (
-              gridLen - i >= len &&
-              row[j] === word[0] &&
-              grid
-                .slice(i, i + len)
-                .reduce((str, row, index) => str + row[j + index], '') === word
-            ) {
-              return (results[word] = {
-                start: [rowNum, colNum],
-                end: [i + len, j + len]
-              });
-            }
-            // bottom right to top left
-            if (
-              gridLen - i >= len &&
-              row[j] === word[len - 1] &&
-              grid
-                .slice(i, i + len)
-                .reduce((str, row, index) => str + row[j + index], '') ===
-                reverseStr(word)
-            ) {
-              return (results[word] = {
-                start: [i + len, j + len],
-                end: [rowNum, colNum]
-              });
-            }
-            // bottom left to top right
-            if (
-              gridLen - i >= len &&
-              row[j] === word[len - 1] &&
-              grid
-                .slice(i, i + len)
-                .reduce((str, row, index) => str + row[j - index], '') ===
-                reverseStr(word)
-            ) {
-              return (results[word] = {
-                start: [i + len, colNum - len + 1],
-                end: [rowNum, colNum]
-              });
-            }
-            // top right to bottom left
-            if (
-              gridLen - i >= len &&
-              row[j] === word[0] &&
-              grid
-                .slice(i, i + len)
-                .reduce((str, row, index) => str + row[j - index], '') === word
-            ) {
-              return (results[word] = {
-                start: [rowNum, colNum],
-                end: [i + len, colNum - len + 1]
-              });
+            if (row[j] === word[wordLen - 1]) {
+              if (findBottomToTop(results, word, grid, i, row, j)) return;
             }
           }
         }
