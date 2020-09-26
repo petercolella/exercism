@@ -7,34 +7,40 @@ const reverseStr = str => {
   return str.split('').reverse().join('');
 };
 
-const findHorizontally = (results, word, grid, i) => {
+const findHorizontally = (results, word, row, rowNum) => {
   const wordLen = word.length;
-  const row = grid[i];
-  const rowNum = i + 1;
-  const firstLetterIndex = row.indexOf(word[0]);
-  if (
-    firstLetterIndex !== -1 &&
-    firstLetterIndex + wordLen <= row.length &&
-    row.substring(firstLetterIndex, firstLetterIndex + wordLen) === word
-  ) {
-    results[word] = {
-      start: [rowNum, firstLetterIndex + 1],
-      end: [rowNum, firstLetterIndex + wordLen]
-    };
-    return true;
+
+  const firstLetterIndexes = [...row].reduce(
+    (arr, char, i) => (char === word[0] ? [...arr, i] : arr),
+    []
+  );
+
+  for (const i of firstLetterIndexes) {
+    if (i + wordLen <= row.length && row.substring(i, i + wordLen) === word) {
+      results[word] = {
+        start: [rowNum, i + 1],
+        end: [rowNum, i + wordLen]
+      };
+      return true;
+    }
   }
-  const lastLetterIndex = row.indexOf(word[wordLen - 1]);
-  if (
-    lastLetterIndex !== -1 &&
-    lastLetterIndex + wordLen <= row.length &&
-    row.substring(lastLetterIndex, lastLetterIndex + wordLen) ===
-      reverseStr(word)
-  ) {
-    results[word] = {
-      start: [rowNum, lastLetterIndex + wordLen],
-      end: [rowNum, lastLetterIndex + 1]
-    };
-    return true;
+
+  const lastLetterIndexes = [...row].reduce(
+    (arr, char, i) => (char === word[wordLen - 1] ? [...arr, i] : arr),
+    []
+  );
+
+  for (const i of lastLetterIndexes) {
+    if (
+      i + wordLen <= row.length &&
+      row.substring(i, i + wordLen) === reverseStr(word)
+    ) {
+      results[word] = {
+        start: [rowNum, i + wordLen],
+        end: [rowNum, i + 1]
+      };
+      return true;
+    }
   }
   return false;
 };
@@ -129,11 +135,12 @@ class WordSearch {
     const results = {};
     const grid = this.grid;
     const gridLen = grid.length;
+
     words.forEach(word => {
       results[word] = undefined;
       const wordLen = word.length;
       for (let i = 0; i < gridLen; i++) {
-        if (findHorizontally(results, word, grid, i)) return;
+        if (findHorizontally(results, word, grid[i], i + 1)) return;
         if (gridLen - i >= wordLen) {
           const row = grid[i];
           for (let j = 0; j < row.length; j++) {
@@ -147,6 +154,7 @@ class WordSearch {
         }
       }
     });
+
     return results;
   }
 }
