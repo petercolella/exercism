@@ -7,120 +7,105 @@ const reverseStr = str => {
   return str.split('').reverse().join('');
 };
 
-const findHorizontally = (results, word, row, rowNum) => {
-  const wordLen = word.length;
+const findHorizontally = ({
+  results,
+  word,
+  wordLength,
+  row,
+  rowNum,
+  j,
+  isFirstLetter,
+  searchedWord
+}) => {
+  const resultsValue = {
+    start: isFirstLetter ? [rowNum, j + 1] : [rowNum, j + wordLength],
+    end: isFirstLetter ? [rowNum, j + wordLength] : [rowNum, j + 1]
+  };
 
-  const firstLetterIndexes = [...row].reduce(
-    (arr, char, i) => (char === word[0] ? [...arr, i] : arr),
-    []
-  );
-
-  for (const i of firstLetterIndexes) {
-    if (i + wordLen <= row.length && row.substring(i, i + wordLen) === word) {
-      results[word] = {
-        start: [rowNum, i + 1],
-        end: [rowNum, i + wordLen]
-      };
-      return true;
-    }
-  }
-
-  const lastLetterIndexes = [...row].reduce(
-    (arr, char, i) => (char === word[wordLen - 1] ? [...arr, i] : arr),
-    []
-  );
-
-  for (const i of lastLetterIndexes) {
-    if (
-      i + wordLen <= row.length &&
-      row.substring(i, i + wordLen) === reverseStr(word)
-    ) {
-      results[word] = {
-        start: [rowNum, i + wordLen],
-        end: [rowNum, i + 1]
-      };
-      return true;
-    }
-  }
-  return false;
-};
-
-const findTopToBottom = (results, word, grid, i, row, j) => {
-  const wordLen = word.length;
-  const slicedGrid = grid.slice(i, i + wordLen);
-  const rowNum = i + 1;
-  const colNum = j + 1;
-  const start = [rowNum, colNum];
-  // top to bottom
-  if (slicedGrid.reduce((str, row) => str + row[j], '') === word) {
-    results[word] = {
-      start,
-      end: [i + wordLen, colNum]
-    };
-    return true;
-  }
-  // top left to bottom right
-  if (
-    j + wordLen <= row.length &&
-    slicedGrid.reduce((str, row, index) => str + row[j + index], '') === word
-  ) {
-    results[word] = {
-      start,
-      end: [i + wordLen, j + wordLen]
-    };
-    return true;
-  }
-  // top right to bottom left
-  if (
-    colNum - wordLen >= 0 &&
-    slicedGrid.reduce((str, row, index) => str + row[j - index], '') === word
-  ) {
-    results[word] = {
-      start,
-      end: [i + wordLen, colNum - wordLen + 1]
-    };
+  if (row.substring(j, j + wordLength) === searchedWord) {
+    results[word] = resultsValue;
     return true;
   }
   return false;
 };
 
-const findBottomToTop = (results, word, grid, i, row, j) => {
-  const wordLen = word.length;
-  const slicedGrid = grid.slice(i, i + wordLen);
-  const rowNum = i + 1;
-  const colNum = j + 1;
-  const end = [rowNum, colNum];
-  const reversedWord = reverseStr(word);
-  // bottom to top
-  if (slicedGrid.reduce((str, row) => str + row[j], '') === reversedWord) {
-    results[word] = {
-      start: [i + wordLen, colNum],
-      end
-    };
+const findVertically = ({
+  results,
+  word,
+  wordLength,
+  i,
+  rowNum,
+  slicedGrid,
+  j,
+  colNum,
+  isFirstLetter,
+  searchedWord
+}) => {
+  const resultsValue = {
+    start: isFirstLetter ? [rowNum, colNum] : [i + wordLength, colNum],
+    end: isFirstLetter ? [i + wordLength, colNum] : [rowNum, colNum]
+  };
+
+  if (slicedGrid.reduce((str, row) => str + row[j], '') === searchedWord) {
+    results[word] = resultsValue;
     return true;
   }
-  // bottom right to top left
+  return false;
+};
+
+const findTopLeftToBottomRight = ({
+  results,
+  word,
+  wordLength,
+  i,
+  rowNum,
+  slicedGrid,
+  j,
+  colNum,
+  isFirstLetter,
+  searchedWord
+}) => {
+  const resultsValue = {
+    start: isFirstLetter ? [rowNum, colNum] : [i + wordLength, j + wordLength],
+    end: isFirstLetter ? [i + wordLength, j + wordLength] : [rowNum, colNum]
+  };
+
   if (
-    j + wordLen <= row.length &&
     slicedGrid.reduce((str, row, index) => str + row[j + index], '') ===
-      reversedWord
+    searchedWord
   ) {
-    results[word] = {
-      start: [i + wordLen, j + wordLen],
-      end
-    };
+    results[word] = resultsValue;
     return true;
   }
-  // bottom left to top right
+  return false;
+};
+
+const findTopRightToBottomLeft = ({
+  results,
+  word,
+  wordLength,
+  i,
+  rowNum,
+  slicedGrid,
+  j,
+  colNum,
+  isFirstLetter,
+  searchedWord
+}) => {
+  const resultsValue = {
+    start: isFirstLetter
+      ? [rowNum, colNum]
+      : [i + wordLength, colNum - wordLength + 1],
+    end: isFirstLetter
+      ? [i + wordLength, colNum - wordLength + 1]
+      : [rowNum, colNum]
+  };
+
   if (
-    colNum - wordLen >= 0 &&
     slicedGrid.reduce((str, row, index) => str + row[j - index], '') ===
-      reversedWord
+    searchedWord
   ) {
-    results[word] = {
-      start: [i + wordLen, colNum - wordLen + 1],
-      end
-    };
+    results[word] = resultsValue;
     return true;
   }
   return false;
@@ -134,21 +119,47 @@ class WordSearch {
   find(words) {
     const results = {};
     const grid = this.grid;
-    const gridLen = grid.length;
 
     words.forEach(word => {
       results[word] = undefined;
-      const wordLen = word.length;
-      for (let i = 0; i < gridLen; i++) {
-        if (findHorizontally(results, word, grid[i], i + 1)) return;
-        if (gridLen - i >= wordLen) {
-          const row = grid[i];
-          for (let j = 0; j < row.length; j++) {
-            if (row[j] === word[0]) {
-              if (findTopToBottom(results, word, grid, i, row, j)) return;
+      const wordLength = word.length;
+      for (let i = 0; i < grid.length; i++) {
+        const row = grid[i];
+        const rowNum = i + 1;
+        const slicedGrid = grid.slice(i, i + wordLength);
+        const wordFitsToBottom = grid.length - i >= wordLength;
+        for (let j = 0; j < row.length; j++) {
+          const colNum = j + 1;
+          const isFirstLetter = row[j] === word[0];
+          const isLastLetter = row[j] === word[wordLength - 1];
+          if (isFirstLetter || isLastLetter) {
+            const searchedWord = isFirstLetter ? word : reverseStr(word);
+            const wordFitsToRight = j + wordLength <= row.length;
+            const args = {
+              results,
+              word,
+              wordLength,
+              i,
+              row,
+              rowNum,
+              slicedGrid,
+              j,
+              colNum,
+              isFirstLetter,
+              searchedWord
+            };
+            if (wordFitsToRight) {
+              if (findHorizontally(args)) return;
             }
-            if (row[j] === word[wordLen - 1]) {
-              if (findBottomToTop(results, word, grid, i, row, j)) return;
+            if (wordFitsToBottom) {
+              if (findVertically(args)) return;
+              if (wordFitsToRight) {
+                if (findTopLeftToBottomRight(args)) return;
+              }
+              const wordFitsToLeft = j + 1 - wordLength >= 0;
+              if (wordFitsToLeft) {
+                if (findTopRightToBottomLeft(args)) return;
+              }
             }
           }
         }
