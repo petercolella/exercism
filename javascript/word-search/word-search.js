@@ -7,108 +7,83 @@ const reverseStr = str => {
   return str.split('').reverse().join('');
 };
 
-const findHorizontally = ({
-  results,
-  word,
-  wordLength,
-  row,
-  rowNum,
-  j,
-  isFirstLetter,
-  searchedWord
-}) => {
-  const resultsValue = {
-    start: isFirstLetter ? [rowNum, j + 1] : [rowNum, j + wordLength],
-    end: isFirstLetter ? [rowNum, j + wordLength] : [rowNum, j + 1]
-  };
-
-  if (row.substring(j, j + wordLength) === searchedWord) {
-    results[word] = resultsValue;
-    return true;
-  }
-  return false;
-};
-
-const findVertically = ({
-  results,
-  word,
-  wordLength,
-  i,
-  rowNum,
-  slicedGrid,
-  j,
-  colNum,
-  isFirstLetter,
-  searchedWord
-}) => {
-  const resultsValue = {
-    start: isFirstLetter ? [rowNum, colNum] : [i + wordLength, colNum],
-    end: isFirstLetter ? [i + wordLength, colNum] : [rowNum, colNum]
-  };
-
-  if (slicedGrid.reduce((str, row) => str + row[j], '') === searchedWord) {
-    results[word] = resultsValue;
-    return true;
-  }
-  return false;
-};
-
-const findTopLeftToBottomRight = ({
-  results,
-  word,
-  wordLength,
-  i,
-  rowNum,
-  slicedGrid,
-  j,
-  colNum,
-  isFirstLetter,
-  searchedWord
-}) => {
-  const resultsValue = {
-    start: isFirstLetter ? [rowNum, colNum] : [i + wordLength, j + wordLength],
-    end: isFirstLetter ? [i + wordLength, j + wordLength] : [rowNum, colNum]
-  };
-
-  if (
-    slicedGrid.reduce((str, row, index) => str + row[j + index], '') ===
+const findDirection = (
+  {
+    results,
+    word,
+    wordLength,
+    i,
+    row,
+    rowNum,
+    slicedGrid,
+    j,
+    colNum,
+    isFirstLetter,
     searchedWord
-  ) {
-    results[word] = resultsValue;
-    return true;
-  }
-  return false;
-};
+  },
+  directionFn
+) => {
+  let resultsValue;
+  switch (directionFn) {
+    case 'findHorizontally':
+      resultsValue = {
+        start: isFirstLetter ? [rowNum, j + 1] : [rowNum, j + wordLength],
+        end: isFirstLetter ? [rowNum, j + wordLength] : [rowNum, j + 1]
+      };
 
-const findTopRightToBottomLeft = ({
-  results,
-  word,
-  wordLength,
-  i,
-  rowNum,
-  slicedGrid,
-  j,
-  colNum,
-  isFirstLetter,
-  searchedWord
-}) => {
-  const resultsValue = {
-    start: isFirstLetter
-      ? [rowNum, colNum]
-      : [i + wordLength, colNum - wordLength + 1],
-    end: isFirstLetter
-      ? [i + wordLength, colNum - wordLength + 1]
-      : [rowNum, colNum]
-  };
+      if (row.substring(j, j + wordLength) === searchedWord) {
+        results[word] = resultsValue;
+        return true;
+      }
+      return false;
+    case 'findVertically':
+      resultsValue = {
+        start: isFirstLetter ? [rowNum, colNum] : [i + wordLength, colNum],
+        end: isFirstLetter ? [i + wordLength, colNum] : [rowNum, colNum]
+      };
 
-  if (
-    slicedGrid.reduce((str, row, index) => str + row[j - index], '') ===
-    searchedWord
-  ) {
-    results[word] = resultsValue;
-    return true;
+      if (slicedGrid.reduce((str, row) => str + row[j], '') === searchedWord) {
+        results[word] = resultsValue;
+        return true;
+      }
+      return false;
+    case 'findTopLeftToBottomRight':
+      resultsValue = {
+        start: isFirstLetter
+          ? [rowNum, colNum]
+          : [i + wordLength, j + wordLength],
+        end: isFirstLetter ? [i + wordLength, j + wordLength] : [rowNum, colNum]
+      };
+
+      if (
+        slicedGrid.reduce((str, row, index) => str + row[j + index], '') ===
+        searchedWord
+      ) {
+        results[word] = resultsValue;
+        return true;
+      }
+      return false;
+    case 'findTopRightToBottomLeft':
+      resultsValue = {
+        start: isFirstLetter
+          ? [rowNum, colNum]
+          : [i + wordLength, colNum - wordLength + 1],
+        end: isFirstLetter
+          ? [i + wordLength, colNum - wordLength + 1]
+          : [rowNum, colNum]
+      };
+
+      if (
+        slicedGrid.reduce((str, row, index) => str + row[j - index], '') ===
+        searchedWord
+      ) {
+        results[word] = resultsValue;
+        return true;
+      }
+      return false;
+    default:
+      results[word] = undefined;
   }
-  return false;
 };
 
 class WordSearch {
@@ -149,16 +124,16 @@ class WordSearch {
               searchedWord
             };
             if (wordFitsToRight) {
-              if (findHorizontally(args)) return;
+              if (findDirection(args, 'findHorizontally')) return;
             }
             if (wordFitsToBottom) {
-              if (findVertically(args)) return;
+              if (findDirection(args, 'findVertically')) return;
               if (wordFitsToRight) {
-                if (findTopLeftToBottomRight(args)) return;
+                if (findDirection(args, 'findTopLeftToBottomRight')) return;
               }
               const wordFitsToLeft = j + 1 - wordLength >= 0;
               if (wordFitsToLeft) {
-                if (findTopRightToBottomLeft(args)) return;
+                if (findDirection(args, 'findTopRightToBottomLeft')) return;
               }
             }
           }
