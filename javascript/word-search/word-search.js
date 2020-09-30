@@ -9,6 +9,13 @@ class WordSearch {
     this.results = {};
   }
 
+  getPotentialFind(slicedGrid, j, increment) {
+    return slicedGrid.reduce(
+      (str, row, index) => str + row[j + index * increment],
+      ''
+    );
+  }
+
   reverseStr(str) {
     return str.split('').reverse().join('');
   }
@@ -49,9 +56,7 @@ class WordSearch {
           [resultsKey2]: [i + wordLength, colNum]
         };
 
-        if (
-          slicedGrid.reduce((str, row) => str + row[j], '') === searchedWord
-        ) {
+        if (this.getPotentialFind(slicedGrid, j, 0) === searchedWord) {
           this.results[word] = resultsValue;
           return true;
         }
@@ -62,10 +67,7 @@ class WordSearch {
           [resultsKey2]: [i + wordLength, j + wordLength]
         };
 
-        if (
-          slicedGrid.reduce((str, row, index) => str + row[j + index], '') ===
-          searchedWord
-        ) {
+        if (this.getPotentialFind(slicedGrid, j, 1) === searchedWord) {
           this.results[word] = resultsValue;
           return true;
         }
@@ -76,10 +78,7 @@ class WordSearch {
           [resultsKey2]: [i + wordLength, colNum - wordLength + 1]
         };
 
-        if (
-          slicedGrid.reduce((str, row, index) => str + row[j - index], '') ===
-          searchedWord
-        ) {
+        if (this.getPotentialFind(slicedGrid, j, -1) === searchedWord) {
           this.results[word] = resultsValue;
           return true;
         }
