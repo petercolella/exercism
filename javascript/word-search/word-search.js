@@ -16,28 +16,22 @@ class WordSearch {
         const gridRow = this.grid[row - 1];
         const wordFitsToBottom = this.grid.length - row >= len;
         for (let col = 1; col <= gridRow.length; col++) {
-          const isFirstLetter = gridRow[col - 1] === word[0];
-          const isLastLetter = gridRow[col - 1] === word[word.length - 1];
-          if (isFirstLetter || isLastLetter) {
+          const isFirstChar = gridRow[col - 1] === word[0];
+          const isLastChar = gridRow[col - 1] === word[word.length - 1];
+          if (isFirstChar || isLastChar) {
             const wordFitsToRight = col + len <= gridRow.length;
-            const args = {
-              word,
-              len,
-              row,
-              col,
-              isFirstLetter
-            };
+            const args = { word, row, col, isFirstChar };
             if (wordFitsToRight) {
-              if (this.findDirection(args, 'horizontal')) return;
+              if (this.findDirection(args, [0, 1])) return;
             }
             if (wordFitsToBottom) {
-              if (this.findDirection(args, 'vertical')) return;
+              if (this.findDirection(args, [1, 0])) return;
               if (wordFitsToRight) {
-                if (this.findDirection(args, 'topLeftToBottomRight')) return;
+                if (this.findDirection(args, [1, 1])) return;
               }
               const wordFitsToLeft = col - len > 0;
               if (wordFitsToLeft) {
-                if (this.findDirection(args, 'topRightToBottomLeft')) return;
+                if (this.findDirection(args, [1, -1])) return;
               }
             }
           }
@@ -49,56 +43,33 @@ class WordSearch {
     return this.results;
   }
 
-  findDirection({ word, len, row, col, isFirstLetter }, direction) {
-    let location = false;
-    const searchedWord = isFirstLetter ? word : this.reverseStr(word);
-
-    switch (direction) {
-      case 'horizontal':
-        if (this.getPotentialFind(row, col, 1, searchedWord, true))
-          location = [row, col + len];
-        break;
-      case 'vertical':
-        if (this.getPotentialFind(row, col, 0, searchedWord)) {
-          location = [row + len, col];
-        }
-        break;
-      case 'topLeftToBottomRight':
-        if (this.getPotentialFind(row, col, 1, searchedWord))
-          location = [row + len, col + len];
-        break;
-      case 'topRightToBottomLeft':
-        if (this.getPotentialFind(row, col, -1, searchedWord))
-          location = [row + len, col - len];
-        break;
-      default:
-        return;
-    }
+  findDirection({ word, row, col, isFirstChar }, direction) {
+    const searchedWord = isFirstChar ? word : this.reverseStr(word);
+    const location = this.getPotentialFind(row, col, direction, searchedWord);
 
     if (location) {
       this.results[word] = {
-        [isFirstLetter ? 'start' : 'end']: [row, col],
-        [isFirstLetter ? 'end' : 'start']: location
+        [isFirstChar ? 'start' : 'end']: [row, col],
+        [isFirstChar ? 'end' : 'start']: location
       };
       return true;
     }
     return false;
   }
 
-  getPotentialFind(row, col, increment, searchedWord, horizontal) {
-    let rowIndex = 0;
-    let colIndex = 0;
+  getPotentialFind(row, col, direction, searchedWord) {
+    let i = 0;
+    const [rowIncrement, colIncrement] = direction;
     while (
-      this.grid[row - 1 + rowIndex][col - 1 + colIndex * increment] ===
-      searchedWord[colIndex]
+      this.grid[row - 1 + i * rowIncrement][col - 1 + i * colIncrement] ===
+      searchedWord[i]
     ) {
-      colIndex++;
-      if (!horizontal) rowIndex++;
-      if (colIndex === searchedWord.length) {
-        return true;
+      i++;
+      if (i === searchedWord.length) {
+        return [row + (i - 1) * rowIncrement, col + (i - 1) * colIncrement];
       }
     }
-    return false;
+    return undefined;
   }
 
   reverseStr(str) {
