@@ -60,15 +60,16 @@ class WordSearch {
           location = [row, col + len];
         break;
       case 'vertical':
-        if (this.getPotentialFind(slicedGrid, col, 0) === searchedWord)
+        if (this.getPotentialFind(slicedGrid, col, 0, searchedWord)) {
           location = [row + len, col];
+        }
         break;
       case 'topLeftToBottomRight':
-        if (this.getPotentialFind(slicedGrid, col, 1) === searchedWord)
+        if (this.getPotentialFind(slicedGrid, col, 1, searchedWord))
           location = [row + len, col + len];
         break;
       case 'topRightToBottomLeft':
-        if (this.getPotentialFind(slicedGrid, col, -1) === searchedWord)
+        if (this.getPotentialFind(slicedGrid, col, -1, searchedWord))
           location = [row + len, col - len];
         break;
       default:
@@ -85,11 +86,15 @@ class WordSearch {
     return false;
   }
 
-  getPotentialFind(slicedGrid, col, increment) {
-    return slicedGrid.reduce(
-      (str, gridRow, index) => str + gridRow[col - 1 + index * increment],
-      ''
-    );
+  getPotentialFind(slicedGrid, col, increment, searchedWord) {
+    let i = 0;
+    while (slicedGrid[i][col - 1 + i * increment] === searchedWord[i]) {
+      i++;
+      if (i === searchedWord.length) {
+        return true;
+      }
+    }
+    return false;
   }
 
   reverseStr(str) {
