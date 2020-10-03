@@ -52,24 +52,23 @@ class WordSearch {
   findDirection({ word, len, row, col, isFirstLetter }, direction) {
     let location = false;
     const searchedWord = isFirstLetter ? word : this.reverseStr(word);
-    const slicedGrid = this.grid.slice(row - 1, row + len);
 
     switch (direction) {
       case 'horizontal':
-        if (this.getPotentialFind(slicedGrid, col, 1, searchedWord, true))
+        if (this.getPotentialFind(row, col, 1, searchedWord, true))
           location = [row, col + len];
         break;
       case 'vertical':
-        if (this.getPotentialFind(slicedGrid, col, 0, searchedWord)) {
+        if (this.getPotentialFind(row, col, 0, searchedWord)) {
           location = [row + len, col];
         }
         break;
       case 'topLeftToBottomRight':
-        if (this.getPotentialFind(slicedGrid, col, 1, searchedWord))
+        if (this.getPotentialFind(row, col, 1, searchedWord))
           location = [row + len, col + len];
         break;
       case 'topRightToBottomLeft':
-        if (this.getPotentialFind(slicedGrid, col, -1, searchedWord))
+        if (this.getPotentialFind(row, col, -1, searchedWord))
           location = [row + len, col - len];
         break;
       default:
@@ -86,11 +85,11 @@ class WordSearch {
     return false;
   }
 
-  getPotentialFind(slicedGrid, col, increment, searchedWord, horizontal) {
+  getPotentialFind(row, col, increment, searchedWord, horizontal) {
     let rowIndex = 0;
     let colIndex = 0;
     while (
-      slicedGrid[rowIndex][col - 1 + colIndex * increment] ===
+      this.grid[row - 1 + rowIndex][col - 1 + colIndex * increment] ===
       searchedWord[colIndex]
     ) {
       colIndex++;
