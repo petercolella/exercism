@@ -56,7 +56,7 @@ class WordSearch {
 
     switch (direction) {
       case 'horizontal':
-        if (this.grid[row - 1].substring(col - 1, col + len) === searchedWord)
+        if (this.getPotentialFind(slicedGrid, col, 1, searchedWord, true))
           location = [row, col + len];
         break;
       case 'vertical':
@@ -86,11 +86,16 @@ class WordSearch {
     return false;
   }
 
-  getPotentialFind(slicedGrid, col, increment, searchedWord) {
-    let i = 0;
-    while (slicedGrid[i][col - 1 + i * increment] === searchedWord[i]) {
-      i++;
-      if (i === searchedWord.length) {
+  getPotentialFind(slicedGrid, col, increment, searchedWord, horizontal) {
+    let rowIndex = 0;
+    let colIndex = 0;
+    while (
+      slicedGrid[rowIndex][col - 1 + colIndex * increment] ===
+      searchedWord[colIndex]
+    ) {
+      colIndex++;
+      if (!horizontal) rowIndex++;
+      if (colIndex === searchedWord.length) {
         return true;
       }
     }
