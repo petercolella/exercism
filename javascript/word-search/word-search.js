@@ -11,20 +11,20 @@ class WordSearch {
 
   find(words) {
     words.forEach(word => {
-      const wordL = word.length;
-      for (let i = 0; i < this.grid.length; i++) {
-        const row = this.grid[i];
-        const wordFitsToBottom = this.grid.length - i >= wordL;
-        for (let j = 0; j < row.length; j++) {
-          const isFirstLetter = row[j] === word[0];
-          const isLastLetter = row[j] === word[wordL - 1];
+      const len = word.length - 1;
+      for (let row = 1; row <= this.grid.length; row++) {
+        const gridRow = this.grid[row - 1];
+        const wordFitsToBottom = this.grid.length - row >= len;
+        for (let col = 1; col <= gridRow.length; col++) {
+          const isFirstLetter = gridRow[col - 1] === word[0];
+          const isLastLetter = gridRow[col - 1] === word[word.length - 1];
           if (isFirstLetter || isLastLetter) {
-            const wordFitsToRight = j + wordL <= row.length;
+            const wordFitsToRight = col + len <= gridRow.length;
             const args = {
               word,
-              wordL,
-              i,
-              j,
+              len,
+              row,
+              col,
               isFirstLetter
             };
             if (wordFitsToRight) {
@@ -35,7 +35,7 @@ class WordSearch {
               if (wordFitsToRight) {
                 if (this.findDirection(args, 'topLeftToBottomRight')) return;
               }
-              const wordFitsToLeft = j + 1 - wordL >= 0;
+              const wordFitsToLeft = col - len > 0;
               if (wordFitsToLeft) {
                 if (this.findDirection(args, 'topRightToBottomLeft')) return;
               }
@@ -49,45 +49,45 @@ class WordSearch {
     return this.results;
   }
 
-  findDirection({ word, wordL, i, j, isFirstLetter }, direction) {
-    let position;
+  findDirection({ word, len, row, col, isFirstLetter }, direction) {
+    let location = false;
     const searchedWord = isFirstLetter ? word : this.reverseStr(word);
-    const slicedGrid = this.grid.slice(i, i + wordL);
+    const slicedGrid = this.grid.slice(row - 1, row + len);
 
     switch (direction) {
       case 'horizontal':
-        if (this.grid[i].substring(j, j + wordL) === searchedWord)
-          position = [i + 1, j + wordL];
+        if (this.grid[row - 1].substring(col - 1, col + len) === searchedWord)
+          location = [row, col + len];
         break;
       case 'vertical':
-        if (this.getPotentialFind(slicedGrid, j, 0) === searchedWord)
-          position = [i + wordL, j + 1];
+        if (this.getPotentialFind(slicedGrid, col, 0) === searchedWord)
+          location = [row + len, col];
         break;
       case 'topLeftToBottomRight':
-        if (this.getPotentialFind(slicedGrid, j, 1) === searchedWord)
-          position = [i + wordL, j + wordL];
+        if (this.getPotentialFind(slicedGrid, col, 1) === searchedWord)
+          location = [row + len, col + len];
         break;
       case 'topRightToBottomLeft':
-        if (this.getPotentialFind(slicedGrid, j, -1) === searchedWord)
-          position = [i + wordL, j + 1 - wordL + 1];
+        if (this.getPotentialFind(slicedGrid, col, -1) === searchedWord)
+          location = [row + len, col - len];
         break;
       default:
-        position = false;
+        return;
     }
 
-    if (position) {
+    if (location) {
       this.results[word] = {
-        [isFirstLetter ? 'start' : 'end']: [i + 1, j + 1],
-        [isFirstLetter ? 'end' : 'start']: position
+        [isFirstLetter ? 'start' : 'end']: [row, col],
+        [isFirstLetter ? 'end' : 'start']: location
       };
       return true;
     }
     return false;
   }
 
-  getPotentialFind(slicedGrid, j, increment) {
+  getPotentialFind(slicedGrid, col, increment) {
     return slicedGrid.reduce(
-      (str, row, index) => str + row[j + index * increment],
+      (str, gridRow, index) => str + gridRow[col - 1 + index * increment],
       ''
     );
   }
