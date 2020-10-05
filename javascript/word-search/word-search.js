@@ -19,7 +19,8 @@ class WordSearch {
         const isLastChar = this.grid[row][col] === word[word.length - 1];
         if (isFirstChar || isLastChar) {
           const args = { word, row, col, isFirstChar };
-          if (this.checkCharFind(args)) return this.checkCharFind(args);
+          const found = this.checkCharFind(args);
+          if (found) return found;
         }
       }
     }
@@ -27,30 +28,24 @@ class WordSearch {
 
   checkCharFind(args) {
     const { word, row, col } = args;
-    const wordFitsToRight = col + word.length <= this.grid[row].length;
-    if (wordFitsToRight) {
-      if (this.findDirection(args, [0, 1]))
-        return this.findDirection(args, [0, 1]);
-    }
-    const wordFitsToBottom = this.grid.length - row >= word.length;
-    if (wordFitsToBottom) {
-      if (this.findDirection(args, [1, 0]))
-        return this.findDirection(args, [1, 0]);
-      if (wordFitsToRight) {
-        if (this.findDirection(args, [1, 1]))
-          return this.findDirection(args, [1, 1]);
-      }
-      const wordFitsToLeft = col - word.length - 1 >= 0;
-      if (wordFitsToLeft) {
-        if (this.findDirection(args, [1, -1]))
-          return this.findDirection(args, [1, -1]);
-      }
+    const found = deltas => this.checkDirection(args, deltas);
+
+    const fitsRight = col + word.length <= this.grid[row].length;
+    if (fitsRight && found([0, 1])) return found([0, 1]);
+
+    const fitsDown = this.grid.length - row >= word.length;
+    if (fitsDown) {
+      if (found([1, 0])) return found([1, 0]);
+      if (fitsRight && found([1, 1])) return found([1, 1]);
+
+      const fitsLeft = col + 1 - word.length >= 0;
+      if (fitsLeft && found([1, -1])) return found([1, -1]);
     }
   }
 
-  findDirection({ word, row, col, isFirstChar }, direction) {
-    const searchedWord = isFirstChar ? word : this.reverseStr(word);
-    const location = this.getPotentialFind(row, col, direction, searchedWord);
+  checkDirection({ word, row, col, isFirstChar }, deltas) {
+    const chars = isFirstChar ? word : this.reverseStr(word);
+    const location = this.getPotentialFind(row, col, deltas, chars);
 
     if (location) {
       return {
@@ -60,21 +55,15 @@ class WordSearch {
     }
   }
 
-  getPotentialFind(row, col, direction, searchedWord) {
+  getPotentialFind(row, col, deltas, chars) {
     let i = 1;
-    const [rowIncrement, colIncrement] = direction;
+    const [rowDelta, colDelta] = deltas;
 
-    while (
-      this.grid[row + i * rowIncrement][col + i * colIncrement] ===
-      searchedWord[i]
-    ) {
-      i++;
-      if (i === searchedWord.length) {
-        return [
-          row + 1 + (i - 1) * rowIncrement,
-          col + 1 + (i - 1) * colIncrement
-        ];
+    while (this.grid[row + i * rowDelta][col + i * colDelta] === chars[i]) {
+      if (i === chars.length - 1) {
+        return [row + 1 + i * rowDelta, col + 1 + i * colDelta];
       }
+      i++;
     }
   }
 
