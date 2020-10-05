@@ -1,15 +1,15 @@
 class WordSearch {
   constructor(grid) {
     this.grid = grid;
-    this.results = {};
   }
 
   find(words) {
-    words.forEach(word => {
-      this.results[word] = this.findEachWord(word);
-    });
-
-    return this.results;
+    return words.reduce((results, word) => {
+      return {
+        ...results,
+        [word]: this.findEachWord(word)
+      };
+    }, {});
   }
 
   findEachWord(word) {
