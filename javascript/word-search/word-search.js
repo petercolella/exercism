@@ -13,6 +13,7 @@ class WordSearch {
   }
 
   findEachWord(word) {
+    word = word.split('');
     for (let row = 0; row < this.grid.length; row++) {
       for (let col = 0; col < this.grid[row].length; col++) {
         const isFirstChar = this.grid[row][col] === word[0];
@@ -44,7 +45,7 @@ class WordSearch {
   }
 
   checkDirection({ word, row, col, isFirstChar }, deltas) {
-    const chars = isFirstChar ? word : this.reverseStr(word);
+    const chars = isFirstChar ? word : [...word].reverse();
     const location = this.getPotentialFind(row, col, deltas, chars);
 
     if (location) {
@@ -65,10 +66,6 @@ class WordSearch {
       }
       i++;
     }
-  }
-
-  reverseStr(str) {
-    return str.split('').reverse().join('');
   }
 }
 
