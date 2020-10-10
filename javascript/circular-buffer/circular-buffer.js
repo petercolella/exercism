@@ -4,24 +4,28 @@
 //
 
 class CircularBuffer {
-  constructor() {
-    throw new Error("Remove this statement and implement this function");
+  constructor(n) {
+    this.buffer = new Array(n);
   }
 
   write() {
-    throw new Error("Remove this statement and implement this function");
+    throw new Error('Remove this statement and implement this function');
   }
 
   read() {
-    throw new Error("Remove this statement and implement this function");
+    const iterator = this.buffer.values();
+    for (const value of iterator) {
+      if (value) return value;
+    }
+    throw new BufferEmptyError('Buffer is empty!');
   }
 
   forceWrite() {
-    throw new Error("Remove this statement and implement this function");
+    throw new Error('Remove this statement and implement this function');
   }
 
   clear() {
-    throw new Error("Remove this statement and implement this function");
+    throw new Error('Remove this statement and implement this function');
   }
 }
 
@@ -29,12 +33,12 @@ export default CircularBuffer;
 
 export class BufferFullError extends Error {
   constructor() {
-    throw new Error("Remove this statement and implement this function");
+    throw new Error('Remove this statement and implement this function');
   }
 }
 
 export class BufferEmptyError extends Error {
-  constructor() {
-    throw new Error("Remove this statement and implement this function");
+  constructor(err) {
+    super(err);
   }
 }
