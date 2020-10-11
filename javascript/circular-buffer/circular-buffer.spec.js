@@ -1,4 +1,7 @@
-import CircularBuffer, { BufferFullError, BufferEmptyError } from './circular-buffer';
+import CircularBuffer, {
+  BufferFullError,
+  BufferEmptyError
+} from './circular-buffer';
 
 describe('CircularBuffer', () => {
   test('reading an empty buffer throws a BufferEmptyError', () => {
@@ -6,7 +9,7 @@ describe('CircularBuffer', () => {
     expect(() => buffer.read()).toThrow(BufferEmptyError);
   });
 
-  xtest('write and read back one item', () => {
+  test('write and read back one item', () => {
     const buffer = new CircularBuffer(1);
     buffer.write('1');
     expect(buffer.read()).toBe('1');
@@ -52,7 +55,7 @@ describe('CircularBuffer', () => {
     expect(buffer.read()).toBe('3');
   });
 
-  xtest('writes of undefined or null don\'t occupy buffer', () => {
+  xtest("writes of undefined or null don't occupy buffer", () => {
     const buffer = new CircularBuffer(3);
     buffer.write(null);
     buffer.write(undefined);

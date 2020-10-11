@@ -8,14 +8,18 @@ class CircularBuffer {
     this.buffer = new Array(n);
   }
 
-  write() {
-    throw new Error('Remove this statement and implement this function');
+  write(item) {
+    for (const [index, element] of this.buffer.entries()) {
+      if (!element) this.buffer[index] = item;
+    }
   }
 
   read() {
-    const iterator = this.buffer.values();
-    for (const value of iterator) {
-      if (value) return value;
+    for (const [index, element] of this.buffer.entries()) {
+      if (element) {
+        this.buffer[index] = undefined;
+        return element;
+      }
     }
     throw new BufferEmptyError('Buffer is empty!');
   }
