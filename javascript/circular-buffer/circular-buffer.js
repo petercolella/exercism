@@ -10,7 +10,7 @@ class CircularBuffer {
 
   write(item) {
     for (const [index, element] of this.buffer.entries()) {
-      if (!element) this.buffer[index] = item;
+      if (!element) return (this.buffer[index] = item);
     }
   }
 

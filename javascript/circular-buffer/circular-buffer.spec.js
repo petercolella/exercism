@@ -16,7 +16,7 @@ describe('CircularBuffer', () => {
     expect(() => buffer.read()).toThrow(BufferEmptyError);
   });
 
-  xtest('write and read back multiple items', () => {
+  test('write and read back multiple items', () => {
     const buffer = new CircularBuffer(2);
     buffer.write('1');
     buffer.write('2');
