@@ -6,19 +6,26 @@
 class CircularBuffer {
   constructor(n) {
     this.buffer = new Array(n);
+    this.oldest = 0;
   }
 
   write(item) {
-    for (const [index, element] of this.buffer.entries()) {
-      if (!element) return (this.buffer[index] = item);
+    for (let i = this.oldest; i < this.buffer.length; i++) {
+      if (!this.buffer[i]) {
+        this.buffer[i] = item;
+        return;
+      }
     }
   }
 
   read() {
-    for (const [index, element] of this.buffer.entries()) {
-      if (element) {
-        this.buffer[index] = undefined;
-        return element;
+    for (let i = this.oldest; i < this.buffer.length; i++) {
+      if (this.buffer[i]) {
+        const item = this.buffer[i];
+        this.buffer[i] = undefined;
+        this.oldest++;
+        if (this.oldest >= this.buffer.length) this.oldest = 0;
+        return item;
       }
     }
     throw new BufferEmptyError('Buffer is empty!');
@@ -29,7 +36,11 @@ class CircularBuffer {
   }
 
   clear() {
-    throw new Error('Remove this statement and implement this function');
+    for (const [index, element] of this.buffer.entries()) {
+      if (element) {
+        this.buffer[index] = undefined;
+      }
+    }
   }
 }
 

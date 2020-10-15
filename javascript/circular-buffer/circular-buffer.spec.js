@@ -25,7 +25,7 @@ describe('CircularBuffer', () => {
     expect(() => buffer.read()).toThrow(BufferEmptyError);
   });
 
-  xtest('clearing a buffer', () => {
+  test('clearing a buffer', () => {
     const buffer = new CircularBuffer(2);
     buffer.write('1');
     buffer.write('2');
@@ -37,7 +37,7 @@ describe('CircularBuffer', () => {
     expect(buffer.read()).toBe('4');
   });
 
-  xtest('alternate write and read', () => {
+  test('alternate write and read', () => {
     const buffer = new CircularBuffer(2);
     buffer.write('1');
     expect(buffer.read()).toBe('1');
@@ -45,7 +45,7 @@ describe('CircularBuffer', () => {
     expect(buffer.read()).toBe('2');
   });
 
-  xtest('reads back oldest item', () => {
+  test('reads back oldest item', () => {
     const buffer = new CircularBuffer(3);
     buffer.write('1');
     buffer.write('2');
