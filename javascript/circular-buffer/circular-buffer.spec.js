@@ -55,7 +55,7 @@ describe('CircularBuffer', () => {
     expect(buffer.read()).toBe('3');
   });
 
-  xtest("writes of undefined or null don't occupy buffer", () => {
+  test("writes of undefined or null don't occupy buffer", () => {
     const buffer = new CircularBuffer(3);
     buffer.write(null);
     buffer.write(undefined);
@@ -63,7 +63,7 @@ describe('CircularBuffer', () => {
     expect(buffer.read()).toBe('1');
   });
 
-  xtest('writing to a full buffer throws a BufferFullError', () => {
+  test('writing to a full buffer throws a BufferFullError', () => {
     const buffer = new CircularBuffer(2);
     buffer.write('1');
     buffer.write('2');

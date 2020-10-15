@@ -16,6 +16,7 @@ class CircularBuffer {
         return;
       }
     }
+    throw new BufferFullError('Buffer is full');
   }
 
   read() {
@@ -47,8 +48,8 @@ class CircularBuffer {
 export default CircularBuffer;
 
 export class BufferFullError extends Error {
-  constructor() {
-    throw new Error('Remove this statement and implement this function');
+  constructor(err) {
+    super(err);
   }
 }
 
